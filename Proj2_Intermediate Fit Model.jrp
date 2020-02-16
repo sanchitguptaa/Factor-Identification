@@ -1,0 +1,531 @@
+﻿New Table( "Augmented Design",
+	Add Rows( 32 ),
+	New Table Variable( "Design", "Augmented Design" ),
+	New Script(
+		"Model",
+		Fit Model(
+			Effects(
+				:Fiber draw speed,
+				:Temperature,
+				:Tension,
+				:Concentration,
+				:Design,
+				:Draw Tower,
+				:Supplier,
+				:Coating,
+				:Fiber draw speed * :Temperature,
+				:Fiber draw speed * :Tension,
+				:Fiber draw speed * :Concentration,
+				:Fiber draw speed * :Design,
+				:Fiber draw speed * :Draw Tower,
+				:Fiber draw speed * :Supplier,
+				:Fiber draw speed * :Coating,
+				:Block
+			),
+			Y( :Y )
+		)
+	),
+	New Script(
+		"Evaluate Design",
+		DOE(
+			Evaluate Design,
+			X(
+				:Fiber draw speed,
+				:Temperature,
+				:Tension,
+				:Concentration,
+				:Design,
+				:Draw Tower,
+				:Supplier,
+				:Coating,
+				:Block
+			)
+		)
+	),
+	New Script(
+		"Original Data Table",
+		New Table( "Final Project Factors(1)",
+			Add Rows( 16 ),
+			New Table Variable( "Design", "Fractional Factorial" ),
+			New Script(
+				"Screening",
+				Fit Two Level Screening(
+					Y( :Y ),
+					X(
+						:Fiber draw speed,
+						:Temperature,
+						:Tension,
+						:Concentration,
+						:Design,
+						:Draw Tower,
+						:Supplier,
+						:Coating
+					)
+				)
+			),
+			New Script(
+				"Model",
+				Fit Model(
+					Effects(
+						:Fiber draw speed,
+						:Temperature,
+						:Tension,
+						:Concentration,
+						:Design,
+						:Draw Tower,
+						:Supplier,
+						:Coating,
+						:Fiber draw speed * :Temperature,
+						:Fiber draw speed * :Tension,
+						:Fiber draw speed * :Concentration,
+						:Fiber draw speed * :Design,
+						:Fiber draw speed * :Draw Tower,
+						:Fiber draw speed * :Supplier,
+						:Fiber draw speed * :Coating
+					),
+					Y( :Y ),
+					PERSONALITY( Standard Least Squares )
+				)
+			),
+			New Script(
+				"Evaluate Design",
+				DOE(
+					Evaluate Design,
+					X(
+						:Fiber draw speed,
+						:Temperature,
+						:Tension,
+						:Concentration,
+						:Design,
+						:Draw Tower,
+						:Supplier,
+						:Coating
+					)
+				)
+			),
+			New Script(
+				"DOE Dialog",
+				DOE(
+					Screening Design,
+					{Add Response( Minimize, "Y", ., ., . ),
+					Add Factor( Continuous, 20, 30, "Fiber draw speed", 0 ),
+					Add Factor( Continuous, 1800, 2200, "Temperature", 0 ),
+					Add Factor( Continuous, 0.5, 1, "Tension", 0 ),
+					Add Factor( Continuous, 0.01, 0.05, "Concentration", 0 ),
+					Add Factor( Categorical, {"1", "2"}, "Design", 0 ),
+					Add Factor( Categorical, {"1", "2"}, "Draw Tower", 0 ),
+					Add Factor( Categorical, {"1", "2"}, "Supplier", 0 ),
+					Add Factor( Categorical, {"1", "2"}, "Coating", 0 ),
+					Set Random Seed( 1254650561 ), Make Design( 2 ),
+					Simulate Responses( 0 ), Save X Matrix( 0 )}
+				)
+			),
+			New Column( "Pattern",
+				Character,
+				"Nominal",
+				Set Values(
+					{"−−−−−−−−", "+++−−−−+", "++−+−−+−", "++−−++−−", "+−++−+−−",
+					"+−+−+−+−", "+−−++−−+", "+−−−−+++", "−++++−−−", "−++−−++−",
+					"−+−+−+−+", "−+−−+−++", "−−++−−++", "−−+−++−+", "−−−++++−",
+					"++++++++"}
+				),
+				Set Display Width( 75 )
+			),
+			New Column( "Fiber draw speed",
+				Numeric,
+				"Continuous",
+				Format( "Best", 12 ),
+				Set Property( "Coding", {20, 30} ),
+				Set Property( "Design Role", DesignRole( Continuous ) ),
+				Set Property( "Factor Changes", Easy ),
+				Set Values(
+					[20, 30, 30, 30, 30, 30, 30, 30, 20, 20, 20, 20, 20, 20, 20, 30]
+				),
+				Set Display Width( 105 )
+			),
+			New Column( "Temperature",
+				Numeric,
+				"Continuous",
+				Format( "Best", 12 ),
+				Set Property( "Coding", {1800, 2200} ),
+				Set Property( "Design Role", DesignRole( Continuous ) ),
+				Set Property( "Factor Changes", Easy ),
+				Set Values(
+					[1800, 2200, 2200, 2200, 1800, 1800, 1800, 1800, 2200, 2200,
+					2200, 2200, 1800, 1800, 1800, 2200]
+				),
+				Set Display Width( 82 )
+			),
+			New Column( "Tension",
+				Numeric,
+				"Continuous",
+				Format( "Best", 12 ),
+				Set Property( "Coding", {0.5, 1} ),
+				Set Property( "Design Role", DesignRole( Continuous ) ),
+				Set Property( "Factor Changes", Easy ),
+				Set Values(
+					[0.5, 1, 0.5, 0.5, 1, 1, 0.5, 0.5, 1, 1, 0.5, 0.5, 1, 1, 0.5, 1]
+				),
+				Set Display Width( 54 )
+			),
+			New Column( "Concentration",
+				Numeric,
+				"Continuous",
+				Format( "Best", 12 ),
+				Set Property( "Coding", {0.01, 0.05} ),
+				Set Property( "Design Role", DesignRole( Continuous ) ),
+				Set Property( "Factor Changes", Easy ),
+				Set Values(
+					[0.01, 0.01, 0.05, 0.01, 0.05, 0.01, 0.05, 0.01, 0.05, 0.01,
+					0.05, 0.01, 0.05, 0.01, 0.05, 0.05]
+				),
+				Set Display Width( 90 )
+			),
+			New Column( "Design",
+				Character( 1 ),
+				"Nominal",
+				Set Property( "Value Ordering", {"1", "2"} ),
+				Set Property( "Design Role", DesignRole( Categorical ) ),
+				Set Property( "Factor Changes", Easy ),
+				Set Values(
+					{"1", "1", "1", "2", "1", "2", "2", "1", "2", "1", "1", "2", "1",
+					"2", "2", "2"}
+				),
+				Set Display Width( 48 )
+			),
+			New Column( "Draw Tower",
+				Character( 1 ),
+				"Nominal",
+				Set Property( "Value Ordering", {"1", "2"} ),
+				Set Property( "Design Role", DesignRole( Categorical ) ),
+				Set Property( "Factor Changes", Easy ),
+				Set Values(
+					{"1", "1", "1", "2", "2", "1", "1", "2", "1", "2", "2", "1", "1",
+					"2", "2", "2"}
+				),
+				Set Display Width( 78 )
+			),
+			New Column( "Supplier",
+				Character( 1 ),
+				"Nominal",
+				Set Property( "Value Ordering", {"1", "2"} ),
+				Set Property( "Design Role", DesignRole( Categorical ) ),
+				Set Property( "Factor Changes", Easy ),
+				Set Values(
+					{"1", "1", "2", "1", "1", "2", "1", "2", "1", "2", "1", "2", "2",
+					"1", "2", "2"}
+				),
+				Set Display Width( 56 )
+			),
+			New Column( "Coating",
+				Character( 1 ),
+				"Nominal",
+				Set Property( "Value Ordering", {"1", "2"} ),
+				Set Property( "Design Role", DesignRole( Categorical ) ),
+				Set Property( "Factor Changes", Easy ),
+				Set Values(
+					{"1", "2", "1", "1", "1", "1", "2", "2", "1", "1", "2", "2", "2",
+					"2", "1", "2"}
+				),
+				Set Display Width( 54 )
+			),
+			New Column( "Y",
+				Numeric,
+				"Continuous",
+				Format( "Best", 12 ),
+				Set Property(
+					"Response Limits",
+					{Goal( Minimize ), Lower( . ), Upper( . ), Importance( . )}
+				),
+				Set Values(
+					[2.188803578, 0.88101201, 2.944788296, 0.986716381, 1.89267033,
+					2.382942452, 1.166130252, 2.302985096, 2.144794894, 0.876707831,
+					2.894290061, 1.016700678, 1.895837717, 2.40213558, 1.140564468,
+					2.163621284]
+				),
+				Set Display Width( 82 )
+			),
+			Set Label Columns( :Pattern )
+		)
+	),
+	New Script(
+		"DOE Dialog",
+		dt = Current Data Table();
+		dt2 = dt << run script( "Original Data Table" );
+		Current Data Table( dt2 );
+		DOE(
+			Augment Design,
+			X(
+				:Fiber draw speed,
+				:Temperature,
+				:Tension,
+				:Concentration,
+				:Design,
+				:Draw Tower,
+				:Supplier,
+				:Coating
+			),
+			Y( :Y ),
+			{Group new runs into separate block, Augment Method( Fold Over, [1] ),
+			Save X Matrix( 0 ), Simulate Responses( 0 ), Make Table}
+		);
+	),
+	New Column( "Fiber draw speed",
+		Numeric,
+		"Continuous",
+		Format( "Best", 12 ),
+		Set Property( "Coding", {20, 30} ),
+		Set Property( "Design Role", DesignRole( Continuous ) ),
+		Set Property( "Factor Changes", Easy ),
+		Set Values(
+			[20, 30, 30, 30, 30, 30, 30, 30, 20, 20, 20, 20, 20, 20, 20, 30, 30, 20,
+			20, 20, 20, 20, 20, 20, 30, 30, 30, 30, 30, 30, 30, 20]
+		),
+		Set Display Width( 105 )
+	),
+	New Column( "Temperature",
+		Numeric,
+		"Continuous",
+		Format( "Best", 12 ),
+		Set Property( "Coding", {1800, 2200} ),
+		Set Property( "Design Role", DesignRole( Continuous ) ),
+		Set Property( "Factor Changes", Easy ),
+		Set Values(
+			[1800, 2200, 2200, 2200, 1800, 1800, 1800, 1800, 2200, 2200, 2200, 2200,
+			1800, 1800, 1800, 2200, 1800, 2200, 2200, 2200, 1800, 1800, 1800, 1800,
+			2200, 2200, 2200, 2200, 1800, 1800, 1800, 2200]
+		),
+		Set Display Width( 82 )
+	),
+	New Column( "Tension",
+		Numeric,
+		"Continuous",
+		Format( "Best", 12 ),
+		Set Property( "Coding", {0.5, 1} ),
+		Set Property( "Design Role", DesignRole( Continuous ) ),
+		Set Property( "Factor Changes", Easy ),
+		Set Values(
+			[0.5, 1, 0.5, 0.5, 1, 1, 0.5, 0.5, 1, 1, 0.5, 0.5, 1, 1, 0.5, 1, 0.5, 1,
+			0.5, 0.5, 1, 1, 0.5, 0.5, 1, 1, 0.5, 0.5, 1, 1, 0.5, 1]
+		),
+		Set Display Width( 54 )
+	),
+	New Column( "Concentration",
+		Numeric,
+		"Continuous",
+		Format( "Best", 12 ),
+		Set Property( "Coding", {0.01, 0.05} ),
+		Set Property( "Design Role", DesignRole( Continuous ) ),
+		Set Property( "Factor Changes", Easy ),
+		Set Values(
+			[0.01, 0.01, 0.05, 0.01, 0.05, 0.01, 0.05, 0.01, 0.05, 0.01, 0.05, 0.01,
+			0.05, 0.01, 0.05, 0.05, 0.01, 0.01, 0.05, 0.01, 0.05, 0.01, 0.05, 0.01,
+			0.05, 0.01, 0.05, 0.01, 0.05, 0.01, 0.05, 0.05]
+		),
+		Set Display Width( 90 )
+	),
+	New Column( "Design",
+		Character( 1 ),
+		"Nominal",
+		Set Property( "Value Ordering", {"1", "2"} ),
+		Set Property( "Design Role", DesignRole( Categorical ) ),
+		Set Property( "Factor Changes", Easy ),
+		Set Values(
+			{"1", "1", "1", "2", "1", "2", "2", "1", "2", "1", "1", "2", "1", "2",
+			"2", "2", "1", "1", "1", "2", "1", "2", "2", "1", "2", "1", "1", "2",
+			"1", "2", "2", "2"}
+		),
+		Set Display Width( 48 )
+	),
+	New Column( "Draw Tower",
+		Character( 1 ),
+		"Nominal",
+		Set Property( "Value Ordering", {"1", "2"} ),
+		Set Property( "Design Role", DesignRole( Categorical ) ),
+		Set Property( "Factor Changes", Easy ),
+		Set Values(
+			{"1", "1", "1", "2", "2", "1", "1", "2", "1", "2", "2", "1", "1", "2",
+			"2", "2", "1", "1", "1", "2", "2", "1", "1", "2", "1", "2", "2", "1",
+			"1", "2", "2", "2"}
+		),
+		Set Display Width( 78 )
+	),
+	New Column( "Supplier",
+		Character( 1 ),
+		"Nominal",
+		Set Property( "Value Ordering", {"1", "2"} ),
+		Set Property( "Design Role", DesignRole( Categorical ) ),
+		Set Property( "Factor Changes", Easy ),
+		Set Values(
+			{"1", "1", "2", "1", "1", "2", "1", "2", "1", "2", "1", "2", "2", "1",
+			"2", "2", "1", "1", "2", "1", "1", "2", "1", "2", "1", "2", "1", "2",
+			"2", "1", "2", "2"}
+		),
+		Set Display Width( 56 )
+	),
+	New Column( "Coating",
+		Character( 1 ),
+		"Nominal",
+		Set Property( "Value Ordering", {"1", "2"} ),
+		Set Property( "Design Role", DesignRole( Categorical ) ),
+		Set Property( "Factor Changes", Easy ),
+		Set Values(
+			{"1", "2", "1", "1", "1", "1", "2", "2", "1", "1", "2", "2", "2", "2",
+			"1", "2", "1", "2", "1", "1", "1", "1", "2", "2", "1", "1", "2", "2",
+			"2", "2", "1", "2"}
+		),
+		Set Display Width( 54 )
+	),
+	New Column( "Block",
+		Character( 1 ),
+		"Nominal",
+		Set Property( "Value Ordering", {"1", "2"} ),
+		Set Property( "RunsPerBlock", 16 ),
+		Set Property( "Design Role", DesignRole( Blocking ) ),
+		Set Property( "Factor Changes", Easy ),
+		Set Values(
+			{"1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1",
+			"1", "1", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2", "2",
+			"2", "2", "2", "2"}
+		),
+		Set Display Width( 48 )
+	),
+	New Column( "Y",
+		Numeric,
+		"Continuous",
+		Format( "Best", 12 ),
+		Set Property(
+			"Response Limits",
+			{Goal( Minimize ), Lower( . ), Upper( . ), Importance( . )}
+		),
+		Set Values(
+			[2.188803578, 0.88101201, 2.944788296, 0.986716381, 1.89267033,
+			2.382942452, 1.166130252, 2.302985096, 2.144794894, 0.876707831,
+			2.894290061, 1.016700678, 1.895837717, 2.40213558, 1.140564468,
+			2.163621284, 2.236033906, 0.929861938, 2.920589046, 0.981139278,
+			1.882426755, 2.349157461, 1.190824937, 2.211279095, 2.30683752,
+			0.930686485, 2.880394066, 0.983032607, 1.787868776, 2.356506511,
+			1.187685603, 2.203378238]
+		),
+		Set Display Width( 77 )
+	)
+) << Run Formulas;
+Fit Model(
+	Y( :Y ),
+	Effects(
+		:Temperature,
+		:Concentration,
+		:Design,
+		:Temperature * :Concentration,
+		:Temperature * :Design,
+		:Temperature * :Draw Tower,
+		:Tension * :Concentration,
+		:Tension * :Design,
+		:Concentration * :Design,
+		:Concentration * :Draw Tower,
+		:Concentration * :Supplier,
+		:Concentration * :Coating,
+		:Design * :Draw Tower,
+		:Design * :Supplier,
+		:Design * :Coating
+	),
+	Personality( "Standard Least Squares" ),
+	History(
+		Effects(
+			:Temperature,
+			:Concentration,
+			:Design,
+			:Temperature * :Tension,
+			:Temperature * :Concentration,
+			:Temperature * :Design,
+			:Temperature * :Draw Tower,
+			:Tension * :Concentration,
+			:Tension * :Design,
+			:Concentration * :Design,
+			:Concentration * :Draw Tower,
+			:Concentration * :Supplier,
+			:Concentration * :Coating,
+			:Design * :Draw Tower,
+			:Design * :Supplier,
+			:Design * :Coating
+		),
+		Effects(
+			:Fiber draw speed,
+			:Temperature,
+			:Tension,
+			:Concentration,
+			:Design,
+			:Draw Tower,
+			:Supplier,
+			:Coating,
+			:Fiber draw speed * :Temperature,
+			:Fiber draw speed * :Tension,
+			:Fiber draw speed * :Concentration,
+			:Fiber draw speed * :Design,
+			:Fiber draw speed * :Draw Tower,
+			:Fiber draw speed * :Supplier,
+			:Fiber draw speed * :Coating,
+			:Temperature * :Tension,
+			:Temperature * :Concentration,
+			:Temperature * :Design,
+			:Temperature * :Draw Tower,
+			:Temperature * :Supplier,
+			:Temperature * :Coating,
+			:Tension * :Concentration,
+			:Tension * :Design,
+			:Tension * :Draw Tower,
+			:Tension * :Supplier,
+			:Tension * :Coating,
+			:Concentration * :Design,
+			:Concentration * :Draw Tower,
+			:Concentration * :Supplier,
+			:Concentration * :Coating,
+			:Design * :Draw Tower,
+			:Design * :Supplier,
+			:Design * :Coating,
+			:Draw Tower * :Supplier,
+			:Draw Tower * :Coating,
+			:Supplier * :Coating
+		)
+	),
+	Emphasis( "Effect Screening" ),
+	Run(
+		Profiler(
+			1,
+			Confidence Intervals( 1 ),
+			Desirability Functions( 1 ),
+			Y << Response Limits(
+				{Lower( 0.75, 0.9819 ), Middle( 1.875, 0.5 ), Upper( 3, 0.066 ),
+				Goal( "Minimize" ), Importance( 1 )}
+			),
+			Arrange in Rows( 5 ),
+			Term Value(
+				Temperature( 2000, Lock( 0 ), Show( 1 ) ),
+				Concentration( 0.03, Min( 0.01 ), Lock( 0 ), Show( 1 ) ),
+				Design( "1", Lock( 0 ), Show( 1 ) ),
+				Draw Tower( "1", Lock( 0 ), Show( 1 ) ),
+				Tension( 0.75, Lock( 0 ), Show( 1 ) ),
+				Supplier( "1", Lock( 0 ), Show( 1 ) ),
+				Coating( "1", Lock( 0 ), Show( 1 ) )
+			)
+		),
+		:Y << {Summary of Fit( 1 ), Analysis of Variance( 1 ),
+		Parameter Estimates( 1 ), Lack of Fit( 0 ),
+		Normal Plot( 1, Half Normal Plot( 1 ) ), Sorted Estimates( 0 ),
+		Plot Actual by Predicted( 1 ), Plot Regression( 0 ),
+		Plot Residual by Predicted( 1 ), Plot Studentized Residuals( 1 ),
+		Plot Effect Leverage( 0 ), Plot Residual by Normal Quantiles( 1 ),
+		Box Cox Y Transformation( 1 ), Interaction Plots( 1 )}
+	),
+	SendToReport(
+		Dispatch(
+			{"Response Y", "Effect Screening", "Normal Plot"},
+			"FitLS NormalEffectPlot",
+			FrameBox,
+			{Frame Size( 390, 337 ), DispatchSeg(
+				Marker Seg( 1 ),
+				label offset( {9, -104, -7} )
+			)}
+		)
+	)
+);
